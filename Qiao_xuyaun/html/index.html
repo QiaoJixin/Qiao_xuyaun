@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			#box{
+				background: hotpink;
+				padding: 20px;
+			}
+			#box1{
+				width: 30%;
+				height: 150px;
+			}
+			#box1 div{
+				width: 100%;
+				margin-top: 10px;
+				float: left;
+				line-height: 50px;
+				text-align: center;
+				border: solid 1px black;
+			}
+			#box{
+				width: 100%;
+				margin:auto;
+			}
+			input{
+				width: 60%;
+				height: 50px;
+			}
+			button{
+				padding: 3px 15px;
+			}
+			.color{
+				background: darkmagenta;
+			}
+			#box1 div span{
+				width: 100%;
+				display:block;
+			}
+			#box1 div p{
+				width: 100%;
+				display:block;
+				border-bottom: solid 1px deeppink;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="box">
+			<input id="ipt" type="text" placeholder="请输入您的心愿"/><br />
+			<button>❤&nbsp;愿</button>
+		</div>
+		<div id="box1">
+			
+		</div>
+	</body>
+	<script src="../js/jquery-1.11.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/ajax_v3.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		$("button").click(function (){
+			$.ajax({
+				url:"http://localhost:8080/add",
+				type:"get",
+				data:{
+					content:$("#ipt").val()
+				},
+				success(res){
+					console.log(res);
+					init();
+				}
+			})
+		})
+		//渲染页面
+		init();
+		function init(){
+			$.ajax({
+				url:"http://localhost:8080/init",
+				type:"get",
+				success(data){
+					console.log(data);
+					let str = "";
+					for (var i = 0; i < data.length; i++) {
+						str += `
+							<div>
+								<p><a href="#" onclick=del("${data[i]._id}")>删除</a></p>
+								<p>${data[i].content}</p>
+								` 
+								if(data[i].color == 0){
+									str += `
+										<span onclick=bian("${data[i]._id}")>√</span>
+										</div>
+									`
+								}else{
+									str += `
+										<span class="color" onclick=bian("${data[i]._id}")>√</span>
+									</div>
+									`
+								}
+					}
+					$("#box1").html(str)
+				}
+			})
+		}
+		//删除
+		function del(id){
+			$.ajax({
+				type:"get",
+				url:"http://localhost:8080/del",
+				data:{id:id},
+				success(res){
+					console.log(res);
+					init();
+				}
+			})
+		}
+		//变色
+		function bian(id){
+			$.ajax({
+				type:"get",
+				url:"http://localhost:8080/bian",
+				data:{id:id},
+				success(res){
+					console.log(res);
+					init();
+				}
+			})
+		}
+	</script>
+</html>
